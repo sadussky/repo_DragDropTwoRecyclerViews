@@ -252,21 +252,25 @@ class MyDragListener : View.OnDragListener {
                 }
             }
             DragEvent.ACTION_DRAG_ENTERED -> {
-                println("ACTION_DRAG_ENTERED")
+                Log.d(TAG, "ACTION_DRAG_ENTERED")
                 val sourceView = event.localState as View
                 if (sourceView.parent == null) {
+                    Log.d(TAG, "sourceView.parent == null")
                     return true
                 }
                 val targetAdaptor = (v.parent as RecyclerView).adapter!! as MyRecyclerviewAdaptor
                 val targetPosition = (v.parent as RecyclerView).getChildAdapterPosition(v)
                 if (v.parent == sourceView.parent) {
+                    Log.d(TAG, "v.parent == sourceView.parent")
                     if (isOriginalParent) {
+                        Log.d(TAG, "isOriginalParent")
                         try {
                             targetAdaptor.notifyItemMoved(finalPosition, targetPosition)
                         } catch (e: Exception) {
                             println("ignore index out of bound")
                         }
                     } else {
+                        Log.d(TAG, "isOriginalParent: false")
                         try {
                             targetAdaptor.notifyItemMoved(finalPositionInOriParent, targetPosition)
                             (finalParent?.adapter as MyRecyclerviewAdaptor?)?.getData()!!
@@ -280,6 +284,7 @@ class MyDragListener : View.OnDragListener {
                     finalPosition = targetPosition
                     finalPositionInOriParent = targetPosition
                 } else {
+                    Log.d(TAG, "v.parent != sourceView.parent")
                     if (isOriginalParent) {
                         val sourceValue =
                             ((sourceView.parent as RecyclerView).adapter as MyRecyclerviewAdaptor).getData()[initPositionInOriParent]
@@ -312,6 +317,7 @@ class MyDragListener : View.OnDragListener {
                 val sourceView = event.localState as View
                 if (finalParent == null || sourceView.parent == null) {
                     Log.d(TAG, "finalParent == null || sourceView.parent == null")
+                    (sourceView.parent as RecyclerView?)?.adapter?.notifyDataSetChanged()
                     return true
                 }
                 val sourceParent = sourceView.parent as RecyclerView
