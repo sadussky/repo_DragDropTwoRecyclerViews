@@ -17,6 +17,7 @@ import com.example.julia.dragdroptworecyclerviews.R
  **/
 
 /**
+ *  extends View.OnDragListener
  *  MyDragListener is the listener that handle all drag events.
  *  It should be used with MyDraggableRecyclerviewAdaptor.
  *  All items that is draggable should set the same drag listener instance
