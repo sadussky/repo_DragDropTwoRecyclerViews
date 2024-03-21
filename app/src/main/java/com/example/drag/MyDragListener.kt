@@ -56,10 +56,10 @@ class MyDragListener : View.OnDragListener {
                         initValueInParent.isDragging = true
                         sourceAdapter.notifyItemChanged(sourcePosition)
                     }
-                    Log.d(TAG, "recycler.left:${recycler.left}")
-                    Log.d(TAG, "recycler.top:${recycler.top}")
-                    Log.d(TAG, "recycler.right:${recycler.right}")
-                    Log.d(TAG, "recycler.bottom:${recycler.bottom}")
+//                    Log.d(TAG, "recycler.left:${recycler.left}")
+//                    Log.d(TAG, "recycler.top:${recycler.top}")
+//                    Log.d(TAG, "recycler.right:${recycler.right}")
+//                    Log.d(TAG, "recycler.bottom:${recycler.bottom}")
                     originParent = recycler
                     originAdaptor = sourceAdapter
                     initPositionInOriParent = sourcePosition
@@ -75,6 +75,11 @@ class MyDragListener : View.OnDragListener {
             }
             DragEvent.ACTION_DRAG_ENTERED -> {
                 Log.d(TAG, "ACTION_DRAG_ENTERED")
+                val eventView = event.localState as View
+                Log.d(TAG, "eventView:$eventView")
+                Log.d(TAG, "v type:$v")
+                Log.d(TAG, "v.parent :${v.parent}")
+
                 if (v is RecyclerView) return true
                 val target: RecyclerView = (v.parent as RecyclerView)
                 val targetAdaptor = target.adapter!! as MyRecyclerviewAdaptor
@@ -131,7 +136,7 @@ class MyDragListener : View.OnDragListener {
                 Log.d(TAG, "ACTION_DRAG_ENDED")
                 val viewParent: RecyclerView = (v.parent as RecyclerView)
                 Log.d(TAG, "finalParent：${finalParent}")
-                Log.d(TAG, "v.parent$：{v.parent}")
+                Log.d(TAG, "v.parent：${v.parent}")
 
                 if (null == finalParent) return true
                 if (null == v.parent) return true
