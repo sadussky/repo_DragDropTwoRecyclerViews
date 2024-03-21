@@ -3,6 +3,7 @@ package com.example.julia.dragdroptworecyclerviews
 import android.graphics.Canvas
 import android.graphics.Point
 import android.os.Build
+import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -150,6 +151,7 @@ class MyRecyclerviewAdaptor :
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val name = myDataset[position]
+        holder.layoutAnimal.visibility = View.VISIBLE;
         holder.txtAnimalName.text = name as String
         holder.layoutAnimal.setOnClickListener {
             clickListener?.recyclerviewClick(name)
@@ -231,6 +233,7 @@ class MyDragListener : View.OnDragListener {
     private var finalPosition = 0
     private var finalPositionInOriParent = 0
     private var finalParent: RecyclerView? = null
+    private var TAG: String = "MyDragListener"
 
 
     override fun onDrag(v: View?, event: DragEvent?): Boolean {
@@ -305,8 +308,10 @@ class MyDragListener : View.OnDragListener {
                 finalParent = v.parent as RecyclerView
             }
             DragEvent.ACTION_DRAG_ENDED -> {
+                Log.d(TAG, "ACTION_DRAG_ENDED")
                 val sourceView = event.localState as View
                 if (finalParent == null || sourceView.parent == null) {
+                    Log.d(TAG, "finalParent == null || sourceView.parent == null")
                     return true
                 }
                 val sourceParent = sourceView.parent as RecyclerView
@@ -327,6 +332,10 @@ class MyDragListener : View.OnDragListener {
                 }
                 (finalParent!!.adapter as MyRecyclerviewAdaptor).notifyDataSetChanged()
                 (sourceView.parent as RecyclerView?)?.adapter?.notifyDataSetChanged()
+                val list = (sourceParent.adapter as MyRecyclerviewAdaptor).getData()
+                val finalList = (finalParent!!.adapter as MyRecyclerviewAdaptor).getData()
+                Log.d(TAG, "list:$list")
+                Log.d(TAG, "finalList:$finalList")
                 isStarted = false
                 finalParent = null
                 isOriginalParent = true
