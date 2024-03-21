@@ -28,6 +28,7 @@ class MyDragListener : View.OnDragListener {
     private var TAG: String = "MyDragListener"
     private var isStarted = false
     private var initPositionInOriParent = 0
+    private var initPositionInOtherParent = 0
     private lateinit var initValueInParent: MyDragBean
     private var originParent: RecyclerView? = null
     private var originAdaptor: MyRecyclerviewAdaptor? = null
@@ -126,6 +127,7 @@ class MyDragListener : View.OnDragListener {
                         Log.d(TAG, "notifyItemInserted")
                         targetAdaptor.getData().add(targetPosition, initValueInParent)
                         targetAdaptor.notifyItemInserted(targetPosition)
+                        initPositionInOtherParent = targetPosition
                     } else {
                         Log.d(TAG, "notifyItemMoved")
                         targetAdaptor.notifyItemMoved(finalPosition, targetPosition)
@@ -148,7 +150,7 @@ class MyDragListener : View.OnDragListener {
                 Log.d(TAG, "v type：$v")
                 Log.d(TAG, "enteredType：$enteredType")
                 if (v is RecyclerView) {
-                    onDropParent = v 
+                    onDropParent = v
                 }
             }
             DragEvent.ACTION_DRAG_ENDED -> {
@@ -168,6 +170,9 @@ class MyDragListener : View.OnDragListener {
                     //处理不同的RecyclerView
                     Log.d(TAG, "finalParent != originParent")
                     originAdaptor?.getData()?.removeAt(initPositionInOriParent)
+                    val finalAdaptor = finalParent?.adapter!! as MyRecyclerviewAdaptor
+                    finalAdaptor.getData().removeAt(initPositionInOtherParent)
+                    finalAdaptor.getData().add(finalPosition, initValueInParent)
                 }
 
                 val list = (viewParent.adapter as MyRecyclerviewAdaptor).getData()
