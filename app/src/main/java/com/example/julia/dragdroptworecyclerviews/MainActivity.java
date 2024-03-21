@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements Listener {
     @BindView(R.id.tvEmptyListBottom)
     TextView tvEmptyListBottom;
     private DragListener dragListener = new DragListener();
+    private MyDragListener myDragListener = new MyDragListener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements Listener {
 
         MyRecyclerviewAdaptor adaptorTop = new MyRecyclerviewAdaptor();
         adaptorTop.setData(topList);
+        adaptorTop.setDragListener(myDragListener);
         ListAdapter topListAdapter = new ListAdapter(topList);
         topListAdapter.setDragListener(dragListener);
         rvTop.setAdapter(adaptorTop);
@@ -66,11 +68,12 @@ public class MainActivity extends AppCompatActivity implements Listener {
         bottomList.add("E");
         bottomList.add("F");
 
-        MyRecyclerviewAdaptor adaptorTop = new MyRecyclerviewAdaptor();
-        adaptorTop.setData(bottomList);
+        MyRecyclerviewAdaptor adaptorBottom = new MyRecyclerviewAdaptor();
+        adaptorBottom.setData(bottomList);
+        adaptorBottom.setDragListener(myDragListener);
         ListAdapter bottomListAdapter = new ListAdapter(bottomList);
         bottomListAdapter.setDragListener(dragListener);
-        rvBottom.setAdapter(adaptorTop);
+        rvBottom.setAdapter(adaptorBottom);
 //        tvEmptyListBottom.setOnDragListener(bottomListAdapter.getDragInstance());
 //        rvBottom.setOnDragListener(bottomListAdapter.getDragInstance());
     }

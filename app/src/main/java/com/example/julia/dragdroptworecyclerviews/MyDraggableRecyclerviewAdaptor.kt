@@ -4,12 +4,10 @@ import android.graphics.Canvas
 import android.graphics.Point
 import android.os.Build
 import android.view.*
+import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
-import java.util.*
-
 import kotlin.math.roundToInt
 
 /**
@@ -134,7 +132,7 @@ class MyRecyclerviewAdaptor :
     }
 
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val layoutAnimal: ConstraintLayout = itemView.findViewById(R.id.frame_layout_item)
+        val layoutAnimal: FrameLayout = itemView.findViewById(R.id.frame_layout_item)
         val txtAnimalName: TextView = itemView.findViewById(R.id.text)
     }
 
