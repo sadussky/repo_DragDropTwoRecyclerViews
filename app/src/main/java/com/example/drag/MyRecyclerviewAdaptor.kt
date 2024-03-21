@@ -89,6 +89,7 @@ class MyRecyclerviewAdaptor :
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         recyclerView.setOnDragListener(dragListener)
+        dragListener?.attachRecyclerView(recyclerView)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {

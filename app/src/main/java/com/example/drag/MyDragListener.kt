@@ -36,9 +36,25 @@ class MyDragListener : View.OnDragListener {
     private var finalPosition = 0
     private var finalParent: RecyclerView? = null
     private var onDropParent: RecyclerView? = null
+
+    private var enteredType: MyDragEnteredType? = null
+
+    private var sourceRecycler: RecyclerView? = null
+    private var otherRecycler: RecyclerView? = null
     private var topRecyclerView: RecyclerView? = null
     private var bottomRecyclerView: RecyclerView? = null
-    private var enteredType: MyDragEnteredType? = null
+
+
+    //attachRecyclerView
+    fun attachRecyclerView(view: RecyclerView?) {
+        if (view != null) {
+            if (view.id == R.id.rvTop) {
+                this.topRecyclerView = view
+            } else if (view.id == R.id.rvBottom) {
+                this.bottomRecyclerView = view
+            }
+        }
+    }
 
 
     override fun onDrag(v: View?, event: DragEvent?): Boolean {
@@ -62,10 +78,6 @@ class MyDragListener : View.OnDragListener {
                         initValueInParent.isDragging = true
                         sourceAdapter.notifyItemChanged(sourcePosition)
                     }
-//                    Log.d(TAG, "recycler.left:${recycler.left}")
-//                    Log.d(TAG, "recycler.top:${recycler.top}")
-//                    Log.d(TAG, "recycler.right:${recycler.right}")
-//                    Log.d(TAG, "recycler.bottom:${recycler.bottom}")
                     originParent = recycler
                     originAdaptor = sourceAdapter
                     initPositionInOriParent = sourcePosition
