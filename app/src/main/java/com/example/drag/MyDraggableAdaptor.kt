@@ -31,6 +31,9 @@ interface MyDraggableAdaptor {
      */
     fun getData(): ArrayList<MyDragBean>
 
+
+    fun getMinDragCount(): Int
+
     /**
      *  Set the drag listener to handle drag events.
      *  This method MUST called BEFORE setData(); otherwise you'll get
@@ -72,7 +75,10 @@ interface MyDraggableAdaptor {
             return@setOnTouchListener false  // leave the touch event to other listeners
         }
         v.setOnLongClickListener {
-//            it.visibility = View.INVISIBLE
+            var size = if (getData().isEmpty()) 0 else getData().size
+            if (size <= getMinDragCount()) {
+                return@setOnLongClickListener true
+            }
             val myShadow = MyDragShadowBuilder(it, touchedX.roundToInt(), touchedY.roundToInt())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 it.startDragAndDrop(

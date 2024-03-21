@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         MyRecyclerviewAdaptor adaptorTop = new MyRecyclerviewAdaptor();
         adaptorTop.setData(topList);
+        adaptorTop.setMinDragCount(1);
         adaptorTop.setDragListener(myDragListener);
         rvTop.setAdapter(adaptorTop);
     }

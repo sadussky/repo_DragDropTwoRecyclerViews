@@ -24,6 +24,7 @@ class MyRecyclerviewAdaptor :
     private var clickListener: OnClickListener? = null
     private var myDataset = ArrayList<MyDragBean>()
     private var dragListener: MyDragListener? = null
+    private var minDragCount: Int = 0
 
     interface OnClickListener {
         fun recyclerviewClick(name: String)
@@ -31,6 +32,14 @@ class MyRecyclerviewAdaptor :
 
     fun setClickListener(parentFragment: OnClickListener) {
         clickListener = parentFragment
+    }
+
+    fun setMinDragCount(minDragCount: Int) {
+        this.minDragCount = minDragCount
+    }
+
+    override fun getMinDragCount(): Int {
+        return this.minDragCount
     }
 
     override fun setDragListener(listener: MyDragListener) {
@@ -55,7 +64,7 @@ class MyRecyclerviewAdaptor :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): MyRecyclerviewAdaptor.MyViewHolder {
+    ): MyViewHolder {
         // create a new view
         val item = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_row, parent, false) as View
