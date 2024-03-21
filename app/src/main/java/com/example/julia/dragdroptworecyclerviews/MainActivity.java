@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     TextView tvEmptyListTop;
     @BindView(R.id.tvEmptyListBottom)
     TextView tvEmptyListBottom;
-    private DragListener dragListener = new DragListener();
     private MyDragListener myDragListener = new MyDragListener();
 
     @Override
