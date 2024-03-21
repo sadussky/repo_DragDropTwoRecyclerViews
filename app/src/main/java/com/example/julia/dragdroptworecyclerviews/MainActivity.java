@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements Listener {
+public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.rvTop)
     RecyclerView rvTop;
@@ -43,9 +44,7 @@ public class MainActivity extends AppCompatActivity implements Listener {
     }
 
     private void initTopRecyclerView() {
-        rvTop.setLayoutManager(new LinearLayoutManager(
-                this, LinearLayoutManager.HORIZONTAL, false));
-
+        rvTop.setLayoutManager(new GridLayoutManager(this, 4));
         ArrayList<String> topList = new ArrayList<>();
         topList.add("A");
         topList.add("B");
@@ -58,37 +57,17 @@ public class MainActivity extends AppCompatActivity implements Listener {
         ListAdapter topListAdapter = new ListAdapter(topList);
         topListAdapter.setDragListener(dragListener);
         rvTop.setAdapter(adaptorTop);
-//        tvEmptyListTop.setOnDragListener(topListAdapter.getDragInstance());
-//        rvTop.setOnDragListener(topListAdapter.getDragInstance());
     }
 
     private void initBottomRecyclerView() {
-        rvBottom.setLayoutManager(new LinearLayoutManager(
-                this, LinearLayoutManager.HORIZONTAL, false));
-
+        rvBottom.setLayoutManager(new GridLayoutManager(this, 4));
         ArrayList<String> bottomList = new ArrayList<>();
         bottomList.add("E");
         bottomList.add("F");
-
         MyRecyclerviewAdaptor adaptorBottom = new MyRecyclerviewAdaptor();
         adaptorBottom.setData(bottomList);
         adaptorBottom.setDragListener(myDragListener);
-        ListAdapter bottomListAdapter = new ListAdapter(bottomList);
-        bottomListAdapter.setDragListener(dragListener);
         rvBottom.setAdapter(adaptorBottom);
-//        tvEmptyListBottom.setOnDragListener(bottomListAdapter.getDragInstance());
-//        rvBottom.setOnDragListener(bottomListAdapter.getDragInstance());
     }
 
-    @Override
-    public void setEmptyListTop(boolean visibility) {
-        tvEmptyListTop.setVisibility(visibility ? View.VISIBLE : View.GONE);
-        rvTop.setVisibility(visibility ? View.GONE : View.VISIBLE);
-    }
-
-    @Override
-    public void setEmptyListBottom(boolean visibility) {
-        tvEmptyListBottom.setVisibility(visibility ? View.VISIBLE : View.GONE);
-        rvBottom.setVisibility(visibility ? View.GONE : View.VISIBLE);
-    }
 }
