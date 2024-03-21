@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements Listener {
     TextView tvEmptyListTop;
     @BindView(R.id.tvEmptyListBottom)
     TextView tvEmptyListBottom;
+    private DragListener dragListener = new DragListener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,28 +43,36 @@ public class MainActivity extends AppCompatActivity implements Listener {
         rvTop.setLayoutManager(new LinearLayoutManager(
                 this, LinearLayoutManager.HORIZONTAL, false));
 
-        List<String> topList = new ArrayList<>();
+        ArrayList<String> topList = new ArrayList<>();
         topList.add("A");
         topList.add("B");
+        topList.add("C");
+        topList.add("D");
 
-        ListAdapter topListAdapter = new ListAdapter(topList, this);
-        rvTop.setAdapter(topListAdapter);
-        tvEmptyListTop.setOnDragListener(topListAdapter.getDragInstance());
-        rvTop.setOnDragListener(topListAdapter.getDragInstance());
+        MyRecyclerviewAdaptor adaptorTop = new MyRecyclerviewAdaptor();
+        adaptorTop.setData(topList);
+        ListAdapter topListAdapter = new ListAdapter(topList);
+        topListAdapter.setDragListener(dragListener);
+        rvTop.setAdapter(adaptorTop);
+//        tvEmptyListTop.setOnDragListener(topListAdapter.getDragInstance());
+//        rvTop.setOnDragListener(topListAdapter.getDragInstance());
     }
 
     private void initBottomRecyclerView() {
         rvBottom.setLayoutManager(new LinearLayoutManager(
                 this, LinearLayoutManager.HORIZONTAL, false));
 
-        List<String> bottomList = new ArrayList<>();
-        bottomList.add("C");
-        bottomList.add("D");
+        ArrayList<String> bottomList = new ArrayList<>();
+        bottomList.add("E");
+        bottomList.add("F");
 
-        ListAdapter bottomListAdapter = new ListAdapter(bottomList, this);
-        rvBottom.setAdapter(bottomListAdapter);
-        tvEmptyListBottom.setOnDragListener(bottomListAdapter.getDragInstance());
-        rvBottom.setOnDragListener(bottomListAdapter.getDragInstance());
+        MyRecyclerviewAdaptor adaptorTop = new MyRecyclerviewAdaptor();
+        adaptorTop.setData(bottomList);
+        ListAdapter bottomListAdapter = new ListAdapter(bottomList);
+        bottomListAdapter.setDragListener(dragListener);
+        rvBottom.setAdapter(adaptorTop);
+//        tvEmptyListBottom.setOnDragListener(bottomListAdapter.getDragInstance());
+//        rvBottom.setOnDragListener(bottomListAdapter.getDragInstance());
     }
 
     @Override
