@@ -6,9 +6,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.drag.MyDragBean;
 import com.example.drag.MyDragListener;
 import com.example.drag.MyRecyclerviewAdaptor;
 
@@ -45,25 +45,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void initTopRecyclerView() {
         rvTop.setLayoutManager(new GridLayoutManager(this, 4));
-        ArrayList<String> topList = new ArrayList<>();
-        topList.add("A");
-        topList.add("B");
-        topList.add("C");
-        topList.add("D");
+        ArrayList<MyDragBean> topList = new ArrayList<>();
+        topList.add(new MyDragBean(false, "A"));
+        topList.add(new MyDragBean(false, "B"));
+        topList.add(new MyDragBean(false, "C"));
+        topList.add(new MyDragBean(false, "D"));
 
         MyRecyclerviewAdaptor adaptorTop = new MyRecyclerviewAdaptor();
         adaptorTop.setData(topList);
         adaptorTop.setDragListener(myDragListener);
-        ListAdapter topListAdapter = new ListAdapter(topList);
-        topListAdapter.setDragListener(dragListener);
         rvTop.setAdapter(adaptorTop);
     }
 
     private void initBottomRecyclerView() {
         rvBottom.setLayoutManager(new GridLayoutManager(this, 4));
-        ArrayList<String> bottomList = new ArrayList<>();
-        bottomList.add("E");
-        bottomList.add("F");
+        ArrayList<MyDragBean> bottomList = new ArrayList<>();
+        bottomList.add(new MyDragBean(false, "E"));
+        bottomList.add(new MyDragBean(false, "F"));
         MyRecyclerviewAdaptor adaptorBottom = new MyRecyclerviewAdaptor();
         adaptorBottom.setData(bottomList);
         adaptorBottom.setDragListener(myDragListener);

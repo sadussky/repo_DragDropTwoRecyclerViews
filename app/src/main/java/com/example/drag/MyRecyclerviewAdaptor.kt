@@ -22,7 +22,7 @@ class MyRecyclerviewAdaptor :
     MyDraggableAdaptor {
 
     private var clickListener: OnClickListener? = null
-    private var myDataset = ArrayList<String>()
+    private var myDataset = ArrayList<MyDragBean>()
     private var dragListener: MyDragListener? = null
 
     interface OnClickListener {
@@ -37,12 +37,12 @@ class MyRecyclerviewAdaptor :
         dragListener = listener
     }
 
-    override fun setData(data: ArrayList<String>) {
+    override fun setData(data: ArrayList<MyDragBean>) {
         myDataset = data
         notifyDataSetChanged()
     }
 
-    override fun getData(): ArrayList<String> {
+    override fun getData(): ArrayList<MyDragBean> {
         return myDataset
     }
 
@@ -65,10 +65,10 @@ class MyRecyclerviewAdaptor :
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val name = myDataset[position]
-        holder.layoutAnimal.visibility = View.VISIBLE;
-        holder.txtAnimalName.text = name as String
+        holder.layoutAnimal.visibility = if (name.isDragging) View.INVISIBLE else View.VISIBLE
+        holder.txtAnimalName.text = name.text
         holder.layoutAnimal.setOnClickListener {
-            clickListener?.recyclerviewClick(name)
+            clickListener?.recyclerviewClick(name.text)
         }
         setDrag(holder.layoutAnimal, position, dragListener!!)
     }

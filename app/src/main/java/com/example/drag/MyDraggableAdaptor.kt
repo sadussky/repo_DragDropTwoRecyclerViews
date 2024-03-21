@@ -22,14 +22,14 @@ interface MyDraggableAdaptor {
      *  @param data the underlying data that RecyclerView use it to make
      *  a list of items.
      */
-    fun setData(data: ArrayList<String>)
+    fun setData(data: ArrayList<MyDragBean>)
 
     /**
      *  Get data of the RecyclerView.
      *  @return the underlying data that RecyclerView use it to make
      *  a list of items.
      */
-    fun getData(): ArrayList<String>
+    fun getData(): ArrayList<MyDragBean>
 
     /**
      *  Set the drag listener to handle drag events.
@@ -60,7 +60,7 @@ interface MyDraggableAdaptor {
     fun setDrag(v: View, position: Int, dragListener: MyDragListener) {
         var touchedX = 0f  // closure variable
         var touchedY = 0f  // closure variable
-        v.visibility = View.VISIBLE
+//        v.visibility = View.VISIBLE
         v.setOnDragListener(dragListener)
         v.setOnTouchListener { v, event ->
             when (event.action) {
@@ -72,7 +72,7 @@ interface MyDraggableAdaptor {
             return@setOnTouchListener false  // leave the touch event to other listeners
         }
         v.setOnLongClickListener {
-            it.visibility = View.INVISIBLE
+//            it.visibility = View.INVISIBLE
             val myShadow = MyDragShadowBuilder(it, touchedX.roundToInt(), touchedY.roundToInt())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 it.startDragAndDrop(
