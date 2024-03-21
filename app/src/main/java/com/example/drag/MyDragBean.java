@@ -1,5 +1,7 @@
 package com.example.drag;
 
+import java.util.Objects;
+
 /**
  * Feature：
  * Description：
@@ -27,4 +29,13 @@ public class MyDragBean {
                 ", text='" + text + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MyDragBean that = (MyDragBean) o;
+        return text.equals(that.text);
+    }
+
 }

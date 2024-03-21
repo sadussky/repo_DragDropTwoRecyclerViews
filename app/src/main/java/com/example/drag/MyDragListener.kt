@@ -166,6 +166,23 @@ class MyDragListener : View.OnDragListener {
                     Log.d(TAG, "finalParent == originParent")
                     originAdaptor?.getData()?.removeAt(initPositionInOriParent)
                     originAdaptor?.getData()?.add(finalPosition, initValueInParent)
+                    if (originParent == topRecyclerView && null != bottomRecyclerView) {
+                        //如果拖曳结束，需要删除新增的item。
+                        val bAdaptor = bottomRecyclerView?.adapter as MyRecyclerviewAdaptor
+                        val bList = bAdaptor.getData()
+                        if (bList.contains(initValueInParent)) {
+                            bAdaptor.getData().removeAt(initPositionInOtherParent)
+                            bAdaptor.notifyDataSetChanged()
+                        }
+                    } else if (originParent == bottomRecyclerView && null != topRecyclerView) {
+                        //如果拖曳结束，需要删除新增的item。
+                        val tAdaptor = topRecyclerView?.adapter as MyRecyclerviewAdaptor
+                        val tList = tAdaptor.getData()
+                        if (tList.contains(initValueInParent)) {
+                            tAdaptor.getData().removeAt(initPositionInOtherParent)
+                            tAdaptor.notifyDataSetChanged()
+                        }
+                    }
                 } else {
                     //处理不同的RecyclerView
                     Log.d(TAG, "finalParent != originParent")
