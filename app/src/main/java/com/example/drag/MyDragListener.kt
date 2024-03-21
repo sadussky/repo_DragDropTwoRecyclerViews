@@ -26,21 +26,25 @@ class MyDragListener : View.OnDragListener {
 
     private var TAG: String = "MyDragListener"
     private var isStarted = false
-    private var isOriginalParent = true
     private var initPositionInOriParent = 0
     private lateinit var initValueInParent: MyDragBean
     private var originParent: RecyclerView? = null
     private var originAdaptor: MyRecyclerviewAdaptor? = null
     private var finalPosition = 0
     private var finalParent: RecyclerView? = null
+    private var onDropParent: RecyclerView? = null
 
 
     override fun onDrag(v: View?, event: DragEvent?): Boolean {
-        if (v == null || v is RecyclerView || v.parent == null) {
+//        if (v == null || v is RecyclerView || v.parent == null) {
+//            return true
+//        }
+        if (v == null || v.parent == null) {
             return true
         }
         when (event?.action) {
             DragEvent.ACTION_DRAG_STARTED -> {
+                if (v is RecyclerView) return true
                 val sourceView = event.localState as View
                 if (!isStarted && sourceView.parent != null) {
                     val recycler: RecyclerView = (sourceView.parent as RecyclerView)
@@ -66,13 +70,12 @@ class MyDragListener : View.OnDragListener {
             }
             DragEvent.ACTION_DRAG_LOCATION -> {
 //                Log.d(TAG, "ACTION_DRAG_LOCATION")
-//                val sourceView = event.localState as View
-//                Log.d(TAG, "sourceView:$sourceView")
-
+//                val eventView = event.localState as View
+//                Log.d(TAG, "eventView:$eventView")
             }
             DragEvent.ACTION_DRAG_ENTERED -> {
                 Log.d(TAG, "ACTION_DRAG_ENTERED")
-//                val sourceView = event.localState as View
+                if (v is RecyclerView) return true
                 val target: RecyclerView = (v.parent as RecyclerView)
                 val targetAdaptor = target.adapter!! as MyRecyclerviewAdaptor
                 val targetPosition = target.getChildAdapterPosition(v)
@@ -112,9 +115,24 @@ class MyDragListener : View.OnDragListener {
                     finalParent = v.parent as RecyclerView
                 }
             }
+            DragEvent.ACTION_DROP -> {
+                Log.d(TAG, "ACTION_DROP")
+                val eventView = event.localState as View
+                Log.d(TAG, "eventView:$eventView")
+                Log.d(TAG, "v type:$v")
+                onDropParent = if (v is RecyclerView) {
+                    v
+                } else {
+                    null
+                }
+            }
             DragEvent.ACTION_DRAG_ENDED -> {
+                if (v is RecyclerView) return true
                 Log.d(TAG, "ACTION_DRAG_ENDED")
                 val viewParent: RecyclerView = (v.parent as RecyclerView)
+                Log.d(TAG, "finalParent：${finalParent}")
+                Log.d(TAG, "v.parent$：{v.parent}")
+
                 if (null == finalParent) return true
                 if (null == v.parent) return true
                 if (finalParent == originParent) {
