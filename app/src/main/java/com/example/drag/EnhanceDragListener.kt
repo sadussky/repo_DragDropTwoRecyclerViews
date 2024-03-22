@@ -31,14 +31,8 @@ class EnhanceDragListener : View.OnDragListener {
     private var initPositionInOriParent = 0
     private var initPositionInOtherParent = 0
     private lateinit var initValueInParent: MyDragBean
-
-
-    private var originAdaptor: MyRecyclerviewAdaptor? = null
     private var finalPosition = 0
     private var finalParent: RecyclerView? = null
-    private var onDropParent: RecyclerView? = null
-    private var enteredType: MyDragEnteredType? = null
-
 
     private var sourceRecycler: RecyclerView? = null
     private var otherRecycler: RecyclerView? = null
@@ -179,7 +173,7 @@ class EnhanceDragListener : View.OnDragListener {
 //                Log.d(TAG, "v：$v")
 //                Log.d(TAG, "v.parent：${v.parent}")
                 if (v is RecyclerView) {
-                    onDropParent = v
+
                 }
             }
             DragEvent.ACTION_DRAG_ENDED -> {
