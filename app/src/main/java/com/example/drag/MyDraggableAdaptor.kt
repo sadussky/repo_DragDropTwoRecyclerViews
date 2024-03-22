@@ -40,7 +40,7 @@ interface MyDraggableAdaptor {
      *  a NullPointerException while calling this method.
      *  @param listener the drag listener that handle all drag events.
      */
-    fun setDragListener(listener: MyDragListener)
+    fun setDragListener(listener: EnhanceDragListener)
 
     /**
      *  Set each item of the RecyclerView to be draggable.
@@ -60,7 +60,7 @@ interface MyDraggableAdaptor {
      *  @param position the position of this View in the parent RecyclerView.
      *  @param dragListener the drag listener that handle all drag events.
      */
-    fun setDrag(v: View, position: Int, dragListener: MyDragListener) {
+    fun setDrag(v: View, position: Int, dragListener: EnhanceDragListener) {
         var touchedX = 0f  // closure variable
         var touchedY = 0f  // closure variable
 //        v.visibility = View.VISIBLE

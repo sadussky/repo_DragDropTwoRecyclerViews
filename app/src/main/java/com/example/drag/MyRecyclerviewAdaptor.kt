@@ -23,7 +23,7 @@ class MyRecyclerviewAdaptor :
 
     private var clickListener: OnClickListener? = null
     private var myDataset = ArrayList<MyDragBean>()
-    private var dragListener: MyDragListener? = null
+    private var dragListener: EnhanceDragListener? = null
     private var minDragCount: Int = 0
 
     interface OnClickListener {
@@ -42,7 +42,7 @@ class MyRecyclerviewAdaptor :
         return this.minDragCount
     }
 
-    override fun setDragListener(listener: MyDragListener) {
+    override fun setDragListener(listener: EnhanceDragListener) {
         dragListener = listener
     }
 

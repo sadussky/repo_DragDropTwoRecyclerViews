@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.drag.MyDragBean;
-import com.example.drag.MyDragListener;
 import com.example.drag.MyRecyclerviewAdaptor;
+import com.example.drag.EnhanceDragListener;
 
 import java.util.ArrayList;
 
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tvEmptyListTop;
     @BindView(R.id.tvEmptyListBottom)
     TextView tvEmptyListBottom;
-    private MyDragListener myDragListener = new MyDragListener();
+    private EnhanceDragListener myDragListener = new EnhanceDragListener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
