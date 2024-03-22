@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         topList.add(new MyDragBean(false, "B"));
         topList.add(new MyDragBean(false, "C"));
         topList.add(new MyDragBean(false, "D"));
+        topList.add(new MyDragBean(false, "E"));
+        topList.add(new MyDragBean(false, "F"));
 
         MyRecyclerviewAdaptor adaptorTop = new MyRecyclerviewAdaptor();
         adaptorTop.setData(topList);
@@ -60,8 +62,9 @@ public class MainActivity extends AppCompatActivity {
     private void initBottomRecyclerView() {
         rvBottom.setLayoutManager(new GridLayoutManager(this, 4));
         ArrayList<MyDragBean> bottomList = new ArrayList<>();
-        bottomList.add(new MyDragBean(false, "E"));
-        bottomList.add(new MyDragBean(false, "F"));
+        bottomList.add(new MyDragBean(false, "X"));
+        bottomList.add(new MyDragBean(false, "Y"));
+        bottomList.add(new MyDragBean(false, "Z"));
         MyRecyclerviewAdaptor adaptorBottom = new MyRecyclerviewAdaptor();
         adaptorBottom.setData(bottomList);
         adaptorBottom.setDragListener(myDragListener);

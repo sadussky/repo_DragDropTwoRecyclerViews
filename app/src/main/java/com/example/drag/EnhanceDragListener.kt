@@ -26,23 +26,29 @@ import com.example.julia.dragdroptworecyclerviews.R
 class EnhanceDragListener : View.OnDragListener {
 
 
-    private var TAG: String = "MyDragListener"
+    private var TAG: String = "EnhanceDragListener"
     private var isStarted = false
     private var initPositionInOriParent = 0
     private var initPositionInOtherParent = 0
     private lateinit var initValueInParent: MyDragBean
-    private var originParent: RecyclerView? = null
+
+
     private var originAdaptor: MyRecyclerviewAdaptor? = null
     private var finalPosition = 0
     private var finalParent: RecyclerView? = null
     private var onDropParent: RecyclerView? = null
-
     private var enteredType: MyDragEnteredType? = null
+
 
     private var sourceRecycler: RecyclerView? = null
     private var otherRecycler: RecyclerView? = null
+    private var sourceAdaptor: MyRecyclerviewAdaptor? = null
+    private var otherAdaptor: MyRecyclerviewAdaptor? = null
+    private var sourceList: ArrayList<MyDragBean>? = null
     private var topRecyclerView: RecyclerView? = null
     private var bottomRecyclerView: RecyclerView? = null
+    private var topAdaptor: MyRecyclerviewAdaptor? = null
+    private var bottomAdaptor: MyRecyclerviewAdaptor? = null
 
 
     //attachRecyclerView
@@ -50,8 +56,10 @@ class EnhanceDragListener : View.OnDragListener {
         if (view != null) {
             if (view.id == R.id.rvTop) {
                 this.topRecyclerView = view
+                this.topAdaptor = this.topRecyclerView?.adapter as MyRecyclerviewAdaptor
             } else if (view.id == R.id.rvBottom) {
                 this.bottomRecyclerView = view
+                this.bottomAdaptor = this.bottomRecyclerView?.adapter as MyRecyclerviewAdaptor
             }
         }
     }
@@ -66,60 +74,66 @@ class EnhanceDragListener : View.OnDragListener {
         }
         when (event?.action) {
             DragEvent.ACTION_DRAG_STARTED -> {
+                Log.d(TAG, "ACTION_DRAG_STARTED")
+                val localView = event.localState as View
+//                Log.d(TAG, "localView：$localView")
+//                Log.d(TAG, "localView.parent：${localView.parent}")
+//                Log.d(TAG, "v：$v")
+//                Log.d(TAG, "v.parent：${v.parent}")
                 if (v is RecyclerView) return true
-                val sourceView = event.localState as View
-                if (!isStarted && sourceView.parent != null) {
-                    val recycler: RecyclerView = (sourceView.parent as RecyclerView)
-                    val sourcePosition: Int = recycler.getChildAdapterPosition(sourceView)
-                    val sourceAdapter = recycler.adapter!! as MyRecyclerviewAdaptor
-                    val list: ArrayList<MyDragBean> = sourceAdapter.getData()
-                    if (list.size > sourcePosition) {
-                        initValueInParent = list[sourcePosition]
-                        initValueInParent.isDragging = true
-                        sourceAdapter.notifyItemChanged(sourcePosition)
-                    }
-                    originParent = recycler
-                    originAdaptor = sourceAdapter
+                if (!isStarted && localView.parent != null) {
+                    sourceRecycler = (localView.parent as RecyclerView)
+                    sourceAdaptor = sourceRecycler?.adapter!! as MyRecyclerviewAdaptor
+                    sourceList = sourceAdaptor?.getData()
+                    val sourcePosition: Int = sourceRecycler!!.getChildAdapterPosition(localView)
+                    initValueInParent = sourceList?.get(sourcePosition)!!
+                    initValueInParent.isDragging = true
+                    sourceAdaptor?.notifyItemChanged(sourcePosition)
                     initPositionInOriParent = sourcePosition
-                    finalParent = recycler
+                    if (sourceRecycler == topRecyclerView) {
+                        //sourceRecycler == topRecyclerView
+                        otherRecycler = bottomRecyclerView
+                        otherAdaptor = bottomAdaptor
+                    } else {
+                        //sourceRecycler == bottomRecyclerView
+                        otherRecycler = topRecyclerView
+                        otherAdaptor = topAdaptor
+                    }
+                    finalParent = sourceRecycler
                     finalPosition = sourcePosition
                     isStarted = true
                 }
             }
             DragEvent.ACTION_DRAG_LOCATION -> {
 //                Log.d(TAG, "ACTION_DRAG_LOCATION")
-//                val eventView = event.localState as View
-//                Log.d(TAG, "eventView:$eventView")
+                val localView = event.localState as View
+//                Log.d(TAG, "localView：$localView")
+//                Log.d(TAG, "localView.parent：${localView.parent}")
+//                Log.d(TAG, "v：$v")
+//                Log.d(TAG, "v.parent：${v.parent}")
             }
             DragEvent.ACTION_DRAG_ENTERED -> {
                 Log.d(TAG, "ACTION_DRAG_ENTERED")
-                val eventView = event.localState as View
-                Log.d(TAG, "eventView:$eventView")
-                Log.d(TAG, "v type:$v")
-                Log.d(TAG, "v.parent :${v.parent}")
+                val localView = event.localState as View
+                Log.d(TAG, "localView：$localView")
+                Log.d(TAG, "localView.parent：${localView.parent}")
+                Log.d(TAG, "v：$v")
+                Log.d(TAG, "v.parent：${v.parent}")
                 if (v is RecyclerView) {
-                    if (v.id == R.id.rvTop) {
-                        topRecyclerView = v
-                        enteredType = MyDragEnteredType.TopRecyclerView
-                    } else if (v.id == R.id.rvBottom) {
-                        bottomRecyclerView = v
-                        enteredType = MyDragEnteredType.BottomRecyclerItem
-                    }
                     return true
                 }
                 val target: RecyclerView = (v.parent as RecyclerView)
                 val targetAdaptor = target.adapter!! as MyRecyclerviewAdaptor
                 val targetPosition = target.getChildAdapterPosition(v)
-                if (v.parent == originParent) {
-                    Log.d(TAG, "v.parent == originParent")
-                    enteredType = MyDragEnteredType.TopRecyclerViewItem
+                val targetData = targetAdaptor.getData()
+                if (target == sourceRecycler) {
+                    Log.d(TAG, "target == sourceRecycler")
                     try {
                         Log.d(TAG, "finalPosition:${finalPosition}")
                         Log.d(TAG, "targetPosition:${targetPosition}")
-                        val targetData = targetAdaptor.getData()
                         if (!targetData.contains(initValueInParent)) {
                             Log.d(TAG, "notifyItemInserted")
-                            targetAdaptor.getData().add(targetPosition, initValueInParent)
+                            targetData.add(targetPosition, initValueInParent)
                             targetAdaptor.notifyItemInserted(targetPosition)
                         } else {
                             Log.d(TAG, "notifyItemMoved")
@@ -129,91 +143,95 @@ class EnhanceDragListener : View.OnDragListener {
                         Log.d(TAG, "occur Exception:" + Log.getStackTraceString(e))
                     }
                     finalPosition = targetPosition
-                    finalParent = v.parent as RecyclerView
+                    finalParent = target
                 } else {
-                    //不同的RecyclerView,
-                    enteredType = MyDragEnteredType.BottomRecyclerItem
-                    Log.d(TAG, "v.parent != originParent")
-                    val targetData = targetAdaptor.getData()
-                    if (!targetData.contains(initValueInParent)) {
-                        //如果目标RecyclerView没有加入则插入一条数据。
-                        Log.d(TAG, "notifyItemInserted")
-                        targetAdaptor.getData().add(targetPosition, initValueInParent)
-                        targetAdaptor.notifyItemInserted(targetPosition)
-                        initPositionInOtherParent = targetPosition
-                    } else {
-                        Log.d(TAG, "notifyItemMoved")
-                        targetAdaptor.notifyItemMoved(finalPosition, targetPosition)
-                    }
-                    finalPosition = targetPosition
-                    finalParent = v.parent as RecyclerView
+//                    //不同的RecyclerView,
+//                    enteredType = MyDragEnteredType.BottomRecyclerItem
+//                    Log.d(TAG, "v.parent != originParent")
+//                    val targetData = targetAdaptor.getData()
+//                    if (!targetData.contains(initValueInParent)) {
+//                        //如果目标RecyclerView没有加入则插入一条数据。
+//                        Log.d(TAG, "notifyItemInserted")
+//                        targetAdaptor.getData().add(targetPosition, initValueInParent)
+//                        targetAdaptor.notifyItemInserted(targetPosition)
+//                        initPositionInOtherParent = targetPosition
+//                    } else {
+//                        Log.d(TAG, "notifyItemMoved")
+//                        targetAdaptor.notifyItemMoved(finalPosition, targetPosition)
+//                    }
+//                    finalPosition = targetPosition
+//                    finalParent = target
                 }
             }
             DragEvent.ACTION_DRAG_EXITED -> {
                 Log.d(TAG, "ACTION_DRAG_EXITED")
-                val eventView = event.localState as View
-                Log.d(TAG, "eventView:$eventView")
-                Log.d(TAG, "v type：$v")
-//                Log.d(TAG, "enteredType：$enteredType")
+                val localView = event.localState as View
+//                Log.d(TAG, "localView：$localView")
+//                Log.d(TAG, "localView.parent：${localView.parent}")
+//                Log.d(TAG, "v：$v")
+//                Log.d(TAG, "v.parent：${v.parent}")
             }
             DragEvent.ACTION_DROP -> {
                 Log.d(TAG, "ACTION_DROP")
-                val eventView = event.localState as View
-                Log.d(TAG, "eventView:$eventView")
-                Log.d(TAG, "v type：$v")
-                Log.d(TAG, "enteredType：$enteredType")
+                val localView = event.localState as View
+//                Log.d(TAG, "localView：$localView")
+//                Log.d(TAG, "localView.parent：${localView.parent}")
+//                Log.d(TAG, "v：$v")
+//                Log.d(TAG, "v.parent：${v.parent}")
                 if (v is RecyclerView) {
                     onDropParent = v
                 }
             }
             DragEvent.ACTION_DRAG_ENDED -> {
-                if (v is RecyclerView) return true
                 Log.d(TAG, "ACTION_DRAG_ENDED")
-                val viewParent: RecyclerView = (v.parent as RecyclerView)
-                Log.d(TAG, "finalParent：${finalParent}")
-                Log.d(TAG, "v.parent：${v.parent}")
-
+                val localView = event.localState as View
+//                Log.d(TAG, "localView：$localView")
+//                Log.d(TAG, "localView.parent：${localView.parent}")
+//                Log.d(TAG, "v：$v")
+//                Log.d(TAG, "v.parent：${v.parent}")
+                if (v is RecyclerView) return true
                 if (null == finalParent) return true
                 if (null == v.parent) return true
-                if (finalParent == originParent) {
-                    Log.d(TAG, "finalParent == originParent")
-                    originAdaptor?.getData()?.removeAt(initPositionInOriParent)
-                    originAdaptor?.getData()?.add(finalPosition, initValueInParent)
-                    if (originParent == topRecyclerView && null != bottomRecyclerView) {
+                if (finalParent == sourceRecycler) {
+                    Log.d(TAG, "finalParent == sourceRecycler")
+                    sourceList?.removeAt(initPositionInOriParent)
+                    sourceList?.add(finalPosition, initValueInParent)
+                    if (sourceRecycler == topRecyclerView && null != bottomRecyclerView) {
                         //如果拖曳结束，需要删除新增的item。
-                        val bAdaptor = bottomRecyclerView?.adapter as MyRecyclerviewAdaptor
-                        val bList = bAdaptor.getData()
-                        if (bList.contains(initValueInParent)) {
-                            bAdaptor.getData().removeAt(initPositionInOtherParent)
-                            bAdaptor.notifyDataSetChanged()
+                        val bList = bottomAdaptor?.getData()
+                        if (null != bList && bList.contains(initValueInParent)) {
+                            bottomAdaptor?.getData()?.removeAt(initPositionInOtherParent)
+                            bottomAdaptor?.notifyDataSetChanged()
                         }
-                    } else if (originParent == bottomRecyclerView && null != topRecyclerView) {
+                    } else if (sourceRecycler == bottomRecyclerView && null != topRecyclerView) {
                         //如果拖曳结束，需要删除新增的item。
-                        val tAdaptor = topRecyclerView?.adapter as MyRecyclerviewAdaptor
-                        val tList = tAdaptor.getData()
-                        if (tList.contains(initValueInParent)) {
-                            tAdaptor.getData().removeAt(initPositionInOtherParent)
-                            tAdaptor.notifyDataSetChanged()
+                        val tList = topAdaptor?.getData()
+                        if (null != tList && tList.contains(initValueInParent)) {
+                            topAdaptor?.getData()?.removeAt(initPositionInOtherParent)
+                            topAdaptor?.notifyDataSetChanged()
                         }
                     }
                 } else {
-                    //处理不同的RecyclerView
-                    Log.d(TAG, "finalParent != originParent")
-                    originAdaptor?.getData()?.removeAt(initPositionInOriParent)
-                    val finalAdaptor = finalParent?.adapter!! as MyRecyclerviewAdaptor
-                    finalAdaptor.getData().removeAt(initPositionInOtherParent)
-                    finalAdaptor.getData().add(finalPosition, initValueInParent)
+//                    //处理不同的RecyclerView
+//                    Log.d(TAG, "finalParent != originParent")
+//                    originAdaptor?.getData()?.removeAt(initPositionInOriParent)
+//                    val finalAdaptor = finalParent?.adapter!! as MyRecyclerviewAdaptor
+//                    finalAdaptor.getData().removeAt(initPositionInOtherParent)
+//                    finalAdaptor.getData().add(finalPosition, initValueInParent)
                 }
 
-                val list = (viewParent.adapter as MyRecyclerviewAdaptor).getData()
-                val finalList = (finalParent!!.adapter as MyRecyclerviewAdaptor).getData()
+                val list = sourceAdaptor?.getData()
+                val otherList = otherAdaptor?.getData()
                 Log.d(TAG, "list:$list")
-                Log.d(TAG, "finalList:$finalList")
+                Log.d(TAG, "otherList:$otherList")
                 isStarted = false
                 initValueInParent.isDragging = false
-                originParent?.adapter?.notifyDataSetChanged()
-                originParent = null
-                finalParent?.adapter?.notifyDataSetChanged()
+                initPositionInOriParent = 0
+                initPositionInOtherParent = 0
+                sourceAdaptor?.notifyDataSetChanged()
+                sourceRecycler = null
+                otherAdaptor?.notifyDataSetChanged()
+                otherRecycler = null
                 finalParent = null
                 finalPosition = 0
             }
