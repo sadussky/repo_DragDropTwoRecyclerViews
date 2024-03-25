@@ -134,13 +134,17 @@ class EnhanceDragListener : View.OnDragListener {
                             targetAdaptor.notifyItemMoved(finalPosition, targetPosition)
                         }
                     } catch (e: Exception) {
-                        Log.d(TAG, "occur Exception:" + Log.getStackTraceString(e))
+                        Log.d(TAG, "ENTERED(1)"
+                                + ",Exception:" + Log.getStackTraceString(e))
+
                     }
                     finalPosition = targetPosition
                     finalParent = target
                 } else {
                     Log.d(TAG, "target ！= sourceRecycler")
                     try {
+                        Log.d(TAG, "finalPosition:${finalPosition}")
+                        Log.d(TAG, "targetPosition:${targetPosition}")
                         if (!targetData.contains(initValueInParent)) {
                             //如果目标RecyclerView没有加入则插入一条数据。
                             Log.d(TAG, "notifyItemInserted")
@@ -154,7 +158,8 @@ class EnhanceDragListener : View.OnDragListener {
                         finalPosition = targetPosition
                         finalParent = target
                     } catch (e: Exception) {
-                        Log.d(TAG, "occur Exception:" + Log.getStackTraceString(e))
+                        Log.d(TAG, "ENTERED(2)"
+                                + ",Exception:" + Log.getStackTraceString(e))
                     }
                 }
             }
@@ -192,26 +197,40 @@ class EnhanceDragListener : View.OnDragListener {
                     sourceList?.removeAt(initPositionInOriParent)
                     sourceList?.add(finalPosition, initValueInParent)
                     if (sourceRecycler == topRecyclerView && null != bottomRecyclerView) {
-                        //如果拖曳结束，需要删除新增的item。
-                        val bList = bottomAdaptor?.getData()
-                        if (null != bList && bList.contains(initValueInParent)) {
-                            bottomAdaptor?.getData()?.removeAt(initPositionInOtherParent)
-                            bottomAdaptor?.notifyDataSetChanged()
+                        try {//如果拖曳结束，需要删除新增的item。
+                            val bList = bottomAdaptor?.getData()
+                            if (null != bList && bList.contains(initValueInParent)) {
+                                bottomAdaptor?.getData()?.removeAt(initPositionInOtherParent)
+                                bottomAdaptor?.notifyDataSetChanged()
+                            }
+                        } catch (e: Exception) {
+                            Log.d(TAG, "ENDED(1)"
+                                    + ",Exception:" + Log.getStackTraceString(e))
                         }
                     } else if (sourceRecycler == bottomRecyclerView && null != topRecyclerView) {
                         //如果拖曳结束，需要删除新增的item。
-                        val tList = topAdaptor?.getData()
-                        if (null != tList && tList.contains(initValueInParent)) {
-                            topAdaptor?.getData()?.removeAt(initPositionInOtherParent)
-                            topAdaptor?.notifyDataSetChanged()
+                        try {
+                            val tList = topAdaptor?.getData()
+                            if (null != tList && tList.contains(initValueInParent)) {
+                                topAdaptor?.getData()?.removeAt(initPositionInOtherParent)
+                                topAdaptor?.notifyDataSetChanged()
+                            }
+                        } catch (e: Exception) {
+                            Log.d(TAG, "ENDED(2)"
+                                    + ",Exception:" + Log.getStackTraceString(e))
                         }
                     }
                 } else {
                     //处理不同的RecyclerView
-                    Log.d(TAG, "finalParent != sourceRecycler")
-                    sourceAdaptor?.getData()?.removeAt(initPositionInOriParent)
-                    otherAdaptor?.getData()?.removeAt(initPositionInOtherParent)
-                    otherAdaptor?.getData()?.add(finalPosition, initValueInParent)
+                    try {
+                        Log.d(TAG, "finalParent != sourceRecycler")
+                        sourceAdaptor?.getData()?.removeAt(initPositionInOriParent)
+                        otherAdaptor?.getData()?.removeAt(initPositionInOtherParent)
+                        otherAdaptor?.getData()?.add(finalPosition, initValueInParent)
+                    } catch (e: Exception) {
+                        Log.d(TAG, "ENDED(3)"
+                                + ",Exception:" + Log.getStackTraceString(e))
+                    }
                 }
 
                 val list = sourceAdaptor?.getData()
