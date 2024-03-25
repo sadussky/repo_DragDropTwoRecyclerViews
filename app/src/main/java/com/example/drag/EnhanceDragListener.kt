@@ -139,22 +139,23 @@ class EnhanceDragListener : View.OnDragListener {
                     finalPosition = targetPosition
                     finalParent = target
                 } else {
-//                    //不同的RecyclerView,
-//                    enteredType = MyDragEnteredType.BottomRecyclerItem
-//                    Log.d(TAG, "v.parent != originParent")
-//                    val targetData = targetAdaptor.getData()
-//                    if (!targetData.contains(initValueInParent)) {
-//                        //如果目标RecyclerView没有加入则插入一条数据。
-//                        Log.d(TAG, "notifyItemInserted")
-//                        targetAdaptor.getData().add(targetPosition, initValueInParent)
-//                        targetAdaptor.notifyItemInserted(targetPosition)
-//                        initPositionInOtherParent = targetPosition
-//                    } else {
-//                        Log.d(TAG, "notifyItemMoved")
-//                        targetAdaptor.notifyItemMoved(finalPosition, targetPosition)
-//                    }
-//                    finalPosition = targetPosition
-//                    finalParent = target
+                    Log.d(TAG, "target ！= sourceRecycler")
+                    try {
+                        if (!targetData.contains(initValueInParent)) {
+                            //如果目标RecyclerView没有加入则插入一条数据。
+                            Log.d(TAG, "notifyItemInserted")
+                            targetAdaptor.getData().add(targetPosition, initValueInParent)
+                            targetAdaptor.notifyItemInserted(targetPosition)
+                            initPositionInOtherParent = targetPosition
+                        } else {
+                            Log.d(TAG, "notifyItemMoved")
+                            targetAdaptor.notifyItemMoved(finalPosition, targetPosition)
+                        }
+                        finalPosition = targetPosition
+                        finalParent = target
+                    } catch (e: Exception) {
+                        Log.d(TAG, "occur Exception:" + Log.getStackTraceString(e))
+                    }
                 }
             }
             DragEvent.ACTION_DRAG_EXITED -> {
@@ -206,12 +207,11 @@ class EnhanceDragListener : View.OnDragListener {
                         }
                     }
                 } else {
-//                    //处理不同的RecyclerView
-//                    Log.d(TAG, "finalParent != originParent")
-//                    originAdaptor?.getData()?.removeAt(initPositionInOriParent)
-//                    val finalAdaptor = finalParent?.adapter!! as MyRecyclerviewAdaptor
-//                    finalAdaptor.getData().removeAt(initPositionInOtherParent)
-//                    finalAdaptor.getData().add(finalPosition, initValueInParent)
+                    //处理不同的RecyclerView
+                    Log.d(TAG, "finalParent != sourceRecycler")
+                    sourceAdaptor?.getData()?.removeAt(initPositionInOriParent)
+                    otherAdaptor?.getData()?.removeAt(initPositionInOtherParent)
+                    otherAdaptor?.getData()?.add(finalPosition, initValueInParent)
                 }
 
                 val list = sourceAdaptor?.getData()
