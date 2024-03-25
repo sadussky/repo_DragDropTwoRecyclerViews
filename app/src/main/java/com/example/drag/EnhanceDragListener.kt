@@ -31,8 +31,9 @@ class EnhanceDragListener : View.OnDragListener {
     private var initPositionInOriParent = 0
     private var initPositionInOtherParent = 0
     private lateinit var initValueInParent: MyDragBean
-    private var finalPosition = 0
     private var finalParent: RecyclerView? = null
+    private var finalPosition = 0
+    private var finalPositionInOther = 0
 
     private var sourceRecycler: RecyclerView? = null
     private var otherRecycler: RecyclerView? = null
@@ -143,7 +144,7 @@ class EnhanceDragListener : View.OnDragListener {
                 } else {
                     Log.d(TAG, "target ！= sourceRecycler")
                     try {
-                        Log.d(TAG, "finalPosition:${finalPosition}")
+                        Log.d(TAG, "finalPositionInOther:${finalPositionInOther}")
                         Log.d(TAG, "targetPosition:${targetPosition}")
                         if (!targetData.contains(initValueInParent)) {
                             //如果目标RecyclerView没有加入则插入一条数据。
@@ -153,9 +154,9 @@ class EnhanceDragListener : View.OnDragListener {
                             initPositionInOtherParent = targetPosition
                         } else {
                             Log.d(TAG, "notifyItemMoved")
-                            targetAdaptor.notifyItemMoved(finalPosition, targetPosition)
+                            targetAdaptor.notifyItemMoved(finalPositionInOther, targetPosition)
                         }
-                        finalPosition = targetPosition
+                        finalPositionInOther = targetPosition
                         finalParent = target
                     } catch (e: Exception) {
                         Log.d(TAG, "ENTERED(2)"
@@ -226,7 +227,7 @@ class EnhanceDragListener : View.OnDragListener {
                         Log.d(TAG, "finalParent != sourceRecycler")
                         sourceAdaptor?.getData()?.removeAt(initPositionInOriParent)
                         otherAdaptor?.getData()?.removeAt(initPositionInOtherParent)
-                        otherAdaptor?.getData()?.add(finalPosition, initValueInParent)
+                        otherAdaptor?.getData()?.add(finalPositionInOther, initValueInParent)
                     } catch (e: Exception) {
                         Log.d(TAG, "ENDED(3)"
                                 + ",Exception:" + Log.getStackTraceString(e))
@@ -247,6 +248,7 @@ class EnhanceDragListener : View.OnDragListener {
                 otherRecycler = null
                 finalParent = null
                 finalPosition = 0
+                finalPositionInOther = 0
             }
         }
         return true
