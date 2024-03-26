@@ -3,6 +3,7 @@ package com.example.drag
 import android.util.Log
 import android.view.DragEvent
 import android.view.View
+import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.julia.dragdroptworecyclerviews.R
 
@@ -31,6 +32,7 @@ class EnhanceDragListener : View.OnDragListener {
     private var initPositionInOriParent = 0
     private var initPositionInOtherParent = 0
     private lateinit var initValueInParent: MyDragBean
+    private var finalRecycler: RecyclerView? = null
     private var finalParent: RecyclerView? = null
     private var finalPosition = 0
     private var finalPositionInOther = 0
@@ -115,52 +117,53 @@ class EnhanceDragListener : View.OnDragListener {
                 Log.d(TAG, "v：$v")
                 Log.d(TAG, "v.parent：${v.parent}")
                 if (v is RecyclerView) {
-                    return true
-                }
-                val target: RecyclerView = (v.parent as RecyclerView)
-                val targetAdaptor = target.adapter!! as MyRecyclerviewAdaptor
-                val targetPosition = target.getChildAdapterPosition(v)
-                val targetData = targetAdaptor.getData()
-                if (target == sourceRecycler) {
-                    Log.d(TAG, "target == sourceRecycler")
-                    try {
-                        Log.d(TAG, "finalPosition:${finalPosition}")
-                        Log.d(TAG, "targetPosition:${targetPosition}")
-                        if (!targetData.contains(initValueInParent)) {
-                            Log.d(TAG, "notifyItemInserted")
-                            targetData.add(targetPosition, initValueInParent)
-                            targetAdaptor.notifyItemInserted(targetPosition)
-                        } else {
-                            Log.d(TAG, "notifyItemMoved")
-                            targetAdaptor.notifyItemMoved(finalPosition, targetPosition)
-                        }
-                    } catch (e: Exception) {
-                        Log.d(TAG, "ENTERED(1)"
-                                + ",Exception:" + Log.getStackTraceString(e))
+                    finalRecycler = v
+                } else if (v is FrameLayout) {
+                    val target: RecyclerView = (v.parent as RecyclerView)
+                    val targetAdaptor = target.adapter!! as MyRecyclerviewAdaptor
+                    val targetPosition = target.getChildAdapterPosition(v)
+                    val targetData = targetAdaptor.getData()
+                    if (target == sourceRecycler) {
+                        Log.d(TAG, "target == sourceRecycler")
+                        try {
+                            Log.d(TAG, "finalPosition:${finalPosition}")
+                            Log.d(TAG, "targetPosition:${targetPosition}")
+                            if (!targetData.contains(initValueInParent)) {
+                                Log.d(TAG, "notifyItemInserted")
+                                targetData.add(targetPosition, initValueInParent)
+                                targetAdaptor.notifyItemInserted(targetPosition)
+                            } else {
+                                Log.d(TAG, "notifyItemMoved")
+                                targetAdaptor.notifyItemMoved(finalPosition, targetPosition)
+                            }
+                        } catch (e: Exception) {
+                            Log.d(TAG, "ENTERED(1)"
+                                    + ",Exception:" + Log.getStackTraceString(e))
 
-                    }
-                    finalPosition = targetPosition
-                    finalParent = target
-                } else {
-                    Log.d(TAG, "target ！= sourceRecycler")
-                    try {
-                        Log.d(TAG, "finalPositionInOther:${finalPositionInOther}")
-                        Log.d(TAG, "targetPosition:${targetPosition}")
-                        if (!targetData.contains(initValueInParent)) {
-                            //如果目标RecyclerView没有加入则插入一条数据。
-                            Log.d(TAG, "notifyItemInserted")
-                            targetAdaptor.getData().add(targetPosition, initValueInParent)
-                            targetAdaptor.notifyItemInserted(targetPosition)
-                            initPositionInOtherParent = targetPosition
-                        } else {
-                            Log.d(TAG, "notifyItemMoved")
-                            targetAdaptor.notifyItemMoved(finalPositionInOther, targetPosition)
                         }
-                        finalPositionInOther = targetPosition
+                        finalPosition = targetPosition
                         finalParent = target
-                    } catch (e: Exception) {
-                        Log.d(TAG, "ENTERED(2)"
-                                + ",Exception:" + Log.getStackTraceString(e))
+                    } else {
+                        Log.d(TAG, "target ！= sourceRecycler")
+                        try {
+                            Log.d(TAG, "finalPositionInOther:${finalPositionInOther}")
+                            Log.d(TAG, "targetPosition:${targetPosition}")
+                            if (!targetData.contains(initValueInParent)) {
+                                //如果目标RecyclerView没有加入则插入一条数据。
+                                Log.d(TAG, "notifyItemInserted")
+                                targetAdaptor.getData().add(targetPosition, initValueInParent)
+                                targetAdaptor.notifyItemInserted(targetPosition)
+                                initPositionInOtherParent = targetPosition
+                            } else {
+                                Log.d(TAG, "notifyItemMoved")
+                                targetAdaptor.notifyItemMoved(finalPositionInOther, targetPosition)
+                            }
+                            finalPositionInOther = targetPosition
+                            finalParent = target
+                        } catch (e: Exception) {
+                            Log.d(TAG, "ENTERED(2)"
+                                    + ",Exception:" + Log.getStackTraceString(e))
+                        }
                     }
                 }
             }
@@ -190,6 +193,19 @@ class EnhanceDragListener : View.OnDragListener {
 //                Log.d(TAG, "localView.parent：${localView.parent}")
 //                Log.d(TAG, "v：$v")
 //                Log.d(TAG, "v.parent：${v.parent}")
+                if (finalRecycler == otherRecycler
+                    && otherAdaptor?.getData()!!.isEmpty()
+                ) {
+                    Log.d(TAG, "finalParent is null.")
+                    Log.d(TAG, "finalRecycler == otherRecycler")
+                    sourceAdaptor?.getData()?.removeAt(initPositionInOriParent)
+                    otherAdaptor?.getData()?.add(0, initValueInParent)
+                    otherAdaptor?.notifyItemInserted(0)
+                    sourceAdaptor?.notifyDataSetChanged()
+                    otherAdaptor?.notifyDataSetChanged()
+                    resetToDefault()
+                    return true
+                }
                 if (v is RecyclerView) return true
                 if (null == finalParent) return true
                 if (null == v.parent) return true
@@ -221,10 +237,10 @@ class EnhanceDragListener : View.OnDragListener {
                                     + ",Exception:" + Log.getStackTraceString(e))
                         }
                     }
-                } else {
+                } else if (finalParent == otherRecycler) {
                     //处理不同的RecyclerView
                     try {
-                        Log.d(TAG, "finalParent != sourceRecycler")
+                        Log.d(TAG, "finalParent == otherRecycler")
                         sourceAdaptor?.getData()?.removeAt(initPositionInOriParent)
                         otherAdaptor?.getData()?.removeAt(initPositionInOtherParent)
                         otherAdaptor?.getData()?.add(finalPositionInOther, initValueInParent)
@@ -233,25 +249,27 @@ class EnhanceDragListener : View.OnDragListener {
                                 + ",Exception:" + Log.getStackTraceString(e))
                     }
                 }
-
                 val list = sourceAdaptor?.getData()
                 val otherList = otherAdaptor?.getData()
                 Log.d(TAG, "list:$list")
                 Log.d(TAG, "otherList:$otherList")
-                isStarted = false
-                initValueInParent.isDragging = false
-                initPositionInOriParent = 0
-                initPositionInOtherParent = 0
-                sourceAdaptor?.notifyDataSetChanged()
-                sourceRecycler = null
-                otherAdaptor?.notifyDataSetChanged()
-                otherRecycler = null
-                finalParent = null
-                finalPosition = 0
-                finalPositionInOther = 0
+                resetToDefault()
             }
         }
         return true
     }
 
+    private fun resetToDefault() {
+        isStarted = false
+        initValueInParent.isDragging = false
+        initPositionInOriParent = 0
+        initPositionInOtherParent = 0
+        sourceAdaptor?.notifyDataSetChanged()
+        sourceRecycler = null
+        otherAdaptor?.notifyDataSetChanged()
+        otherRecycler = null
+        finalParent = null
+        finalPosition = 0
+        finalPositionInOther = 0
+    }
 }
